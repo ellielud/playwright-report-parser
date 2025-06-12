@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
 import TheWelcome from './components/TheWelcome.vue'
-import { onMounted } from 'vue'
+import { onMounted, type Ref, ref } from 'vue'
 import axios from 'axios'
+
+const goodbyeResponse: Ref<any> = ref(undefined)
 
 onMounted(() => {
   console.log('onMounted was called!')
-  axios.get('http://127.0.0.1:8000/goodbye').then(response=>console.log(response.data))
+  axios.get('http://127.0.0.1:8000/goodbye').then(response => {
+    console.log(response.data)
+    goodbyeResponse.value = response.data.message;
+  })
 })
 
 </script>
@@ -14,7 +19,7 @@ onMounted(() => {
 <template>
   <header>
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-    jsdsdjfoisajdlf
+    {{goodbyeResponse}}
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
     </div>
