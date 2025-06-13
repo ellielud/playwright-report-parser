@@ -1,4 +1,6 @@
-from fastapi import FastAPI, Depends
+from typing import Annotated
+
+from fastapi import FastAPI, Depends, File
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -32,3 +34,7 @@ def add_row(db: Session = Depends(get_db)):
 @app.get("/goodbye")
 async def goodbye():
     return {"message": "Goodbye World"}
+
+@app.post("/upload-file/")
+async def create_file(file: Annotated[bytes, File()]):
+    return {"file_size": len(file)}
