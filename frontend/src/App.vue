@@ -3,6 +3,7 @@ import HelloWorld from './components/HelloWorld.vue'
 import TheWelcome from './components/TheWelcome.vue'
 import { onMounted, type Ref, ref } from 'vue'
 import axios from 'axios'
+import FileImporter from '@/components/FileImporter.vue'
 
 const goodbyeResponse: Ref<any> = ref(undefined)
 
@@ -20,6 +21,7 @@ onMounted(() => {
   <header>
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
     {{goodbyeResponse}}
+    <file-importer></file-importer>
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
     </div>
