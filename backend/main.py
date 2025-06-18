@@ -1,3 +1,4 @@
+import json
 from typing import List
 from datetime import datetime
 
@@ -75,8 +76,33 @@ async def goodbye():
     return {"message": "Goodbye World"}
 
 @app.post("/upload-file/")
-async def create_file(file: bytes):
-    return {"file_size": len(file)}
+async def create_file(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    # Check if it's a JSON file
+    if not file.filename.endswith('.json'):
+        return {"error": "File must be a JSON file"}
+    
+    try:
+        # Read the file content
+        content = await file.read()
+        report_data = json.loads(content.decode('utf-8'))
+        
+        # Parse the Playwright report
+        test_runs = parse_playwright_report(report_data)
+        
+        # Save all test runs to the database
+        for test_run in test_runs:
+            db.add(test_run)
+        db.commit()
+        
+        return {
+            "message": f"Successfully processed {len(test_runs)} test runs",
+            "test_runs_count": len(test_runs)
+        }
+        
+    except json.JSONDecodeError:
+        return {"error": "Invalid JSON file"}
+    except Exception as e:
+        return {"error": f"Error processing file: {str(e)}"}
 
 @app.get("/get-flaky-tests")
 def get_flaky_tests(db: Session = Depends(get_db)):
